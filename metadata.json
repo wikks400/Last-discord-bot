@@ -1,0 +1,6 @@
+{
+  "name": "Discord Multi-Chain NFT Smart Money Bot",
+  "description": "Multi-chain Discord NFT Smart Money Bot for MonkeyBytes hosting with persistent SQLite, OpenSea event ingestion, adjustable rolling windows, and Discord slash commands.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

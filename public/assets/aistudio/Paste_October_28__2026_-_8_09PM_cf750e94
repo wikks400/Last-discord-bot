@@ -1,0 +1,1447 @@
+Below is your complete, consolidated master prompt, including all your NFT Smart Money Bot requirements and the specific compatibility requirements for hosting on MonkeyBytes. You can copy the entire prompt into your coding AI without combining it with the earlier prompts.
+
+:::writing{variant=“document” title=“Complete Master Prompt — Multi-Chain Discord NFT Smart Money Bot for MonkeyBytes” id=“86142”}
+
+MASTER PROMPT: BUILD A COMPLETE MULTI-CHAIN DISCORD NFT SMART MONEY BOT FOR MONKEYBYTES
+
+1. ROLE AND PROJECT OBJECTIVE
+
+Act as a senior software engineer specializing in TypeScript, Node.js, Discord bots, OpenSea APIs, event-driven systems, SQLite, blockchain-aware NFT applications, and low-resource deployment.
+
+Build a complete, functional, maintainable Discord NFT Smart Money Bot from scratch.
+
+The bot will monitor NFT minting and genuine NFT purchases associated with wallet addresses that I manually add to groups.
+
+It must detect when a configurable number of distinct tracked wallets mint or purchase NFTs from the same verified collection on the same blockchain within a configurable rolling time window.
+
+When the configured threshold is reached, the bot must send an alert to Discord. Further alerts must be sent at configured milestones.
+
+The bot will be hosted on MonkeyBytes:
+
+https://dash.monkey-network.xyz/docs
+
+You must verify the hosting requirements from the official documentation before finalizing the project.
+
+The bot must preserve its core features while remaining as lightweight as reasonably possible.
+
+Non-negotiable requirements
+	1.	OpenSea is the only source of NFT mint and purchase activity.
+	2.	Support every chain OpenSea currently supports for the relevant activity functionality, subject to verified API capabilities.
+	3.	Monitor minting and genuine purchases independently.
+	4.	The default initial alert threshold is three distinct wallets.
+	5.	Default rolling activity windows are 60 minutes.
+	6.	Default follow-up alert milestones are 6, 12, and 15 distinct wallets.
+	7.	Alert thresholds, milestones, and time windows must be adjustable directly through Discord.
+	8.	I must create my wallet groups manually.
+	9.	The production database must initially contain zero groups, zero tracked wallets, and zero fabricated activity.
+	10.	Data and configuration must persist across restarts and redeployments.
+	11.	The application must be compatible with MonkeyBytes’ verified runtime and deployment requirements.
+	12.	Optimize memory, storage, dependencies, and background processing.
+	13.	Never fabricate NFT activity, collection URLs, chain support, or API capabilities.
+	14.	Do not remove essential features merely to reduce resource usage.
+	15.	Do not use paid services as a mandatory dependency.
+	16.	Do not silently replace OpenSea with another data source when a requested capability is unavailable.
+
+If any requirement is impossible because of OpenSea API limitations or MonkeyBytes hosting restrictions, explain the limitation and implement the closest truthful alternative without concealing the limitation.
+
+⸻
+
+2. VERIFY OPENSEA’S CURRENT DOCUMENTATION FIRST
+
+Official documentation:
+
+https://docs.opensea.io/
+
+Before implementation, inspect the current official documentation for:
+	•	API authentication.
+	•	Supported chains.
+	•	Collection metadata.
+	•	Collection identity and verification.
+	•	NFT event endpoints.
+	•	Mint activity.
+	•	Purchase activity.
+	•	Stream API or WebSocket subscriptions.
+	•	REST Events API.
+	•	Historical activity retrieval.
+	•	Pagination.
+	•	Rate limits.
+	•	Event identifiers.
+	•	Event timestamps.
+	•	API response fields.
+	•	API restrictions and availability.
+
+Use only officially documented OpenSea endpoints, SDK methods, and functionality.
+
+Do not invent endpoint URLs, event types, request parameters, response fields, or capabilities.
+
+Verify the documentation against the actual implementation rather than assuming an SDK or endpoint supports something because its name sounds appropriate.
+
+OpenSea-only activity rule
+
+OpenSea must be the only activity source for detecting and verifying minting and purchases.
+
+Do not use:
+	•	Blockchain RPC calls.
+	•	eth_getLogs.
+	•	eth_getTransactionReceipt.
+	•	Blockchain explorer APIs.
+	•	Third-party NFT indexers.
+	•	Other NFT marketplaces.
+	•	Web scraping.
+	•	Browser automation.
+	•	Unofficial NFT data APIs.
+	•	Local blockchain nodes.
+
+Do not supplement missing OpenSea activity with blockchain transactions or another data provider.
+
+Use OpenSea’s documented real-time functionality where supported and its documented historical activity functionality where available.
+
+API limitations
+
+OpenSea may not expose every event type, every historical event, or every chain through every API.
+
+The bot must not claim complete or instantaneous detection unless the actual documented capabilities support that claim.
+
+For every supported chain, determine whether OpenSea provides:
+	•	Collection metadata.
+	•	Collection identity or verification.
+	•	Mint events.
+	•	Purchase events.
+	•	Real-time activity.
+	•	Historical event retrieval.
+	•	Missed-event recovery after disconnection.
+
+Report unsupported capabilities honestly.
+
+Do not treat collection support as proof that mint and purchase monitoring are supported.
+
+API authentication
+
+Read the API key from:
+
+OPENSEA_API_KEY
+
+Never hard-code the key.
+
+Never log the key or expose it through Discord.
+
+Respect OpenSea’s actual rate limits and terms.
+
+Implement request timeouts, bounded retries, exponential backoff with jitter, pagination limits, and bounded concurrency.
+
+Handle HTTP 401, 403, 429, and 5xx errors appropriately.
+
+Do not retry a permanently invalid key indefinitely.
+
+Use free OpenSea access where available. If a required feature needs an API entitlement unavailable on the free tier, explain that limitation rather than assuming paid access.
+
+⸻
+
+3. MONKEYBYTES HOSTING COMPATIBILITY
+
+Official documentation:
+
+https://dash.monkey-network.xyz/docs
+
+The project must be designed for the actual capabilities of MonkeyBytes, not for an assumed generic VPS environment.
+
+Before finalizing the code, inspect the official documentation and establish the following wherever information is available:
+	1.	Supported Node.js versions.
+	2.	Application runtime and deployment methods.
+	3.	GitHub or file-upload deployment support.
+	4.	Dependency installation behavior.
+	5.	Startup-command requirements.
+	6.	TypeScript compilation requirements.
+	7.	Environment-variable configuration.
+	8.	Filesystem persistence.
+	9.	Persistent-volume availability.
+	10.	RAM, CPU, and disk limits for the selected plan.
+	11.	Whether a continuous Node.js process is supported.
+	12.	Whether long-lived WebSocket connections are supported.
+	13.	Outbound HTTPS and WebSocket connectivity.
+	14.	Whether an HTTP port or health endpoint is required.
+	15.	Restart behavior and application logs.
+
+Do not invent dashboard controls, configuration options, or plan limits.
+
+If the documentation does not establish a requirement, mark it as unverified.
+
+Node.js compatibility
+
+Choose a Node.js version supported by MonkeyBytes and compatible with the project’s dependencies.
+
+Provide a valid package.json, a synchronized package-lock.json, and a deterministic production startup command.
+
+The project must install successfully using:
+
+npm ci
+
+Do not provide a package manifest and lockfile that are out of sync.
+
+Do not rely on globally installed packages unless the platform explicitly guarantees them.
+
+If TypeScript is used, compile it to JavaScript during the build or use a documented, compatible runtime approach.
+
+Prefer a straightforward production startup command such as:
+
+npm start
+
+The actual script must match the final project and MonkeyBytes runtime.
+
+Continuous-process compatibility
+
+The bot needs to maintain its Discord connection and, where supported, the required OpenSea real-time connection.
+
+If the selected MonkeyBytes plan does not support persistent background processes or long-lived WebSocket connections, explain the limitation before claiming the bot can run as designed.
+
+Do not add unnecessary HTTP servers, dashboards, or web frameworks.
+
+If MonkeyBytes requires an HTTP endpoint, implement a minimal compatible endpoint using the required platform-provided port and interface.
+
+If no HTTP endpoint is required, do not add one merely for appearance.
+
+Required environment variables
+
+Use these exact names consistently:
+
+DISCORD_BOT_TOKEN=
+DISCORD_CLIENT_ID=
+OPENSEA_API_KEY=
+
+The bot must validate these values at startup without printing their contents.
+
+Do not confuse DISCORD_BOT_TOKEN with DISCORD_TOKEN.
+
+Do not introduce unnecessary environment variables for alert thresholds, milestones, or rolling windows. Those settings must be editable through Discord and persisted in SQLite.
+
+Explain how to enter environment variables using the actual MonkeyBytes interface documented by the platform.
+
+Network compatibility
+
+Verify that the hosting environment permits the outbound connections required by the official OpenSea API and Discord API.
+
+Verify WebSocket connectivity if the implementation relies on OpenSea’s documented real-time service.
+
+If a required connection is blocked, identify the actual error and hosting limitation.
+
+Do not switch to RPC monitoring or a third-party indexer as a workaround.
+
+⸻
+
+4. PERSISTENT STORAGE AND SQLITE
+
+Use SQLite for persistent application data.
+
+Default database path:
+
+./data/bot.db
+
+Create the data directory automatically when necessary.
+
+However, do not assume that ./data is persistent on MonkeyBytes.
+
+Verify the platform’s filesystem and redeployment behavior before choosing the final database location.
+
+If MonkeyBytes provides a persistent volume, configure the database to use it.
+
+If the application filesystem is ephemeral, do not claim that a database stored there will survive redeployment.
+
+Instead, identify a supported persistent-storage option. If an external database is necessary, determine whether the host provides one or supports an appropriate free alternative. Do not require a paid service without clearly explaining why.
+
+Database requirements
+
+Use:
+	•	Safe schema migrations.
+	•	Prepared statements or parameterized queries.
+	•	Appropriate indexes.
+	•	Bounded event retention.
+	•	Persistent event deduplication.
+	•	Persistent alert-delivery state.
+	•	Persistent monitoring checkpoints where supported.
+	•	Persistent alert configuration.
+	•	Safe transaction handling.
+
+Never reset or recreate the production database during normal startup.
+
+Never delete groups, wallets, configuration, or required event history to fix an ordinary error.
+
+Never use database deletion as a memory or storage optimization strategy.
+
+When updating the application, preserve existing production data.
+
+If migration fails, stop the unsafe operation and preserve the original database.
+
+Database backup
+
+Document how to back up the database safely before deployment updates.
+
+Ensure backups do not accidentally include API keys or other secrets.
+
+Do not automatically overwrite a valid production database with an empty database.
+
+Event retention
+
+Implement a bounded retention policy that protects the correctness of the active rolling window, deduplication, pending notifications, and recovery state.
+
+Cleanup must never delete tracked wallets or wallet groups.
+
+Perform cleanup in bounded batches.
+
+Do not aggressively run full-database maintenance on every startup.
+
+Document the trade-off between retaining historical events and conserving disk space.
+
+⸻
+
+5. MANDATORY MULTI-CHAIN SUPPORT
+
+The bot must support every chain currently supported by OpenSea for the specific activity functionality used by the implementation.
+
+Do not restrict monitoring to a hard-coded shortlist.
+
+Ethereum, Polygon, Base, Arbitrum, and Optimism are examples, not a complete list.
+
+Verify the current supported-chain list from official OpenSea documentation.
+
+Central chain-capabilities registry
+
+Implement a centralized registry that records, for each verified chain:
+	•	Canonical chain identifier.
+	•	Official OpenSea chain slug or identifier.
+	•	Display name.
+	•	Collection metadata support.
+	•	Collection identity or verification support.
+	•	Mint-event support.
+	•	Purchase-event support.
+	•	Real-time monitoring support.
+	•	Historical retrieval support.
+	•	Known restrictions.
+	•	Verification notes.
+
+A chain must not be marked as supporting a capability merely because another endpoint supports that chain.
+
+Do not assume that every chain has the same wallet address format.
+
+Use chain-aware validation.
+
+Chain-aware event identity
+
+Normalize each event into a consistent internal format containing the verified fields available from OpenSea:
+	•	Chain identifier.
+	•	Chain display name.
+	•	Collection identifier.
+	•	Contract address, if available.
+	•	Token ID, if available.
+	•	Activity type.
+	•	Stable event identifier, if available.
+	•	Event timestamp.
+	•	Buyer or minter wallet.
+	•	NFT quantity, if reliable.
+	•	Verified collection URL.
+
+Never treat a contract address as globally unique across all chains.
+
+Never combine events from different chains or different collections merely because the contract address or collection name matches.
+
+Chain reporting
+
+Provide /chains or an equivalent command.
+
+Display:
+	•	Verified supported chains.
+	•	Mint monitoring support.
+	•	Purchase monitoring support.
+	•	Real-time monitoring availability.
+	•	Historical recovery capability.
+	•	Known API restrictions.
+	•	Current monitoring health.
+
+Clearly distinguish documented support from functionality that has not been verified.
+
+⸻
+
+6. SMART MONEY DETECTION ENGINE
+
+The bot must monitor the wallet addresses that I manually add to enabled groups.
+
+It must detect coordinated minting and purchasing activity across distinct tracked wallets.
+
+Default mint rules
+	•	Same verified collection.
+	•	Same blockchain.
+	•	Genuine mint activity.
+	•	At least 3 distinct tracked wallets.
+	•	Rolling 60-minute window.
+
+Default purchase rules
+	•	Same verified collection.
+	•	Same blockchain.
+	•	Genuine purchase activity.
+	•	At least 3 distinct tracked wallets.
+	•	Rolling 60-minute window.
+
+Mint and purchase activity must be counted separately.
+
+Immediate threshold alerts
+
+When the third distinct qualifying wallet’s event is processed, the bot must evaluate the threshold and send the alert as soon as practical.
+
+Do not wait for the 60-minute window to expire.
+
+For example, if three distinct tracked wallets mint from the same verified collection on the same chain within the rolling window, trigger a mint alert.
+
+If three distinct tracked wallets buy from that collection, trigger a separate purchase alert.
+
+Distinct-wallet counting
+
+Count each wallet only once globally for the relevant combination of:
+	•	Collection.
+	•	Chain.
+	•	Activity type.
+	•	Rolling time window.
+
+Repeated events from the same wallet must not artificially increase the distinct-wallet count.
+
+A wallet belonging to multiple groups counts only once globally.
+
+Group-level breakdowns may show the same wallet in multiple groups, but global unique-wallet totals must remain deduplicated.
+
+Clearly label global totals and group-level totals.
+
+Rolling-window calculation
+
+Use actual event timestamps provided by OpenSea.
+
+A rolling 60-minute window must move continuously with time.
+
+Handle:
+	•	Out-of-order events.
+	•	Duplicate events.
+	•	Delayed events.
+	•	Invalid timestamps.
+	•	Events received after reconnection.
+	•	Wallet removal.
+	•	Group enablement and disablement.
+	•	Configuration changes during monitoring.
+
+Exclude events outside the configured window.
+
+Do not use a fixed clock-hour calculation.
+
+Correct activity classification
+
+Do not count listings, offers, cancellations, ordinary transfers, or ambiguous events as purchases.
+
+Count a purchase only when OpenSea’s documented event provides sufficient evidence that an actual purchase occurred.
+
+Do not infer a mint from a transfer or sale.
+
+If an event cannot be classified reliably, exclude it from the qualifying count and report the limitation.
+
+NFT quantities
+
+Only display NFT quantities when the available OpenSea event data supports them reliably.
+
+Deduplicate events before aggregating quantities.
+
+Do not assume one event always represents one NFT.
+
+If quantity information is unavailable or unreliable, display NFT quantity unavailable or omit the quantity field.
+
+⸻
+
+7. ADJUSTABLE ALERT THRESHOLDS THROUGH DISCORD
+
+This feature is mandatory.
+
+I must be able to change thresholds, rolling windows, and follow-up milestones directly through Discord without editing source code, changing environment variables, or restarting the bot.
+
+All settings must be validated and persisted in SQLite.
+
+Default mint configuration
+	•	Initial threshold: 3 distinct wallets.
+	•	Follow-up milestone: 6 wallets.
+	•	Follow-up milestone: 12 wallets.
+	•	Follow-up milestone: 15 wallets.
+	•	Rolling window: 60 minutes.
+
+Default purchase configuration
+	•	Initial threshold: 3 distinct wallets.
+	•	Follow-up milestone: 6 wallets.
+	•	Follow-up milestone: 12 wallets.
+	•	Follow-up milestone: 15 wallets.
+	•	Rolling window: 60 minutes.
+
+Mint and purchase configurations must be independent.
+
+Required commands
+
+/alerts settings
+Display:
+	•	Mint alert status.
+	•	Purchase alert status.
+	•	Initial threshold for each activity.
+	•	Follow-up milestones.
+	•	Rolling window for each activity.
+	•	Alert destination.
+	•	Relevant monitoring limitations.
+
+/alerts set_threshold
+Change the initial threshold independently.
+
+Examples:
+
+/alerts set_threshold activity:mint wallets:3
+
+/alerts set_threshold activity:purchase wallets:5
+
+Support any valid positive threshold within a documented safety limit.
+
+/alerts set_window
+Change the rolling window independently for minting or purchases.
+
+Support common values such as:
+	•	5 minutes.
+	•	15 minutes.
+	•	30 minutes.
+	•	60 minutes.
+	•	120 minutes.
+
+Other values may be allowed within a documented safe range.
+
+Reject invalid values with a clear explanation.
+
+/alerts add_milestone
+Add a follow-up milestone for the selected activity type.
+
+/alerts remove_milestone
+Remove a follow-up milestone.
+
+/alerts set_milestones
+Optionally replace the complete milestone list.
+
+Milestones must be unique positive integers greater than the initial threshold.
+
+Sort milestones in ascending order.
+
+/alerts enable
+Enable alert notifications.
+
+/alerts disable
+Disable alert notifications without stopping activity collection or deleting event history.
+
+/alerts reset_defaults
+Restore the default configuration only after confirmation.
+
+/alerts test
+Send a test notification using the current alert format.
+
+This command must not create fake mint or purchase events in the production database.
+
+Immediate updates and persistence
+
+Save settings to SQLite immediately.
+
+Apply them without restarting.
+
+Preserve them across:
+	•	Bot restarts.
+	•	Host restarts.
+	•	Application rebuilds.
+	•	Redeployments.
+	•	Dependency reinstalls.
+
+Changing settings must not reset groups, wallets, activity history, deduplication records, or unrelated configuration.
+
+Threshold changes while activity already exists
+
+When an administrator changes a threshold, re-evaluate qualifying events in the current rolling window.
+
+For example, if the threshold changes from five wallets to three while four distinct qualifying wallets already exist in the current window, send the newly eligible alert once if that milestone has not already been notified.
+
+Do not resend the same alert indefinitely.
+
+Do not disable deduplication.
+
+Define how changes to thresholds and rolling windows affect existing milestone state, and implement that behavior consistently.
+
+Milestone behavior
+
+With default milestones 3, 6, 12, and 15:
+	•	Send the first alert at 3 distinct qualifying wallets.
+	•	Send the next milestone alert at 6.
+	•	Send the next milestone alert at 12.
+	•	Send the next milestone alert at 15.
+
+Each milestone must be tracked independently.
+
+Repeated events, reconnections, restarts, and historical reconciliation must not cause unnecessary duplicate milestone alerts.
+
+Permissions
+
+Only authorized Discord administrators may modify alert settings.
+
+Verify permissions server-side for every configuration command.
+
+Do not rely solely on hiding commands from unauthorized users.
+
+⸻
+
+8. WALLET AND GROUP MANAGEMENT
+
+The bot must support multiple manually created wallet groups.
+
+Examples of group names may include Alpha, Beta, Smart Money, or Watchlist. These are examples only and must not be created automatically.
+
+Production initialization
+
+A new production database must begin with:
+	•	Zero groups.
+	•	Zero tracked wallets.
+	•	Zero fabricated activity.
+
+Do not automatically create Alpha, Beta, Smart Money, or Watchlist groups.
+
+Do not insert sample wallets or fake activity.
+
+The bot must start successfully even if no groups exist.
+
+When appropriate, display:
+
+No wallet groups created yet. Use /group create to create your first group.
+
+Test data must remain isolated in a test database.
+
+Wallet commands
+
+Implement:
+	•	/wallet add
+	•	/wallet bulk_add
+	•	/wallet list
+	•	/wallet remove
+	•	/wallet search
+	•	/wallet status
+
+Support individual wallet addition and bulk addition.
+
+Validate addresses according to the supported chain and address format.
+
+Prevent duplicate entries within the same group.
+
+Allow a wallet to belong to multiple groups.
+
+Explain invalid input clearly.
+
+Group commands
+
+Implement:
+	•	/group create
+	•	/group list
+	•	/group add_wallet
+	•	/group remove_wallet
+	•	/group enable
+	•	/group disable
+	•	/group delete
+
+Group creation must always be initiated by me or another authorized administrator.
+
+Easy group deletion
+
+Do not make deletion dependent solely on internal database IDs.
+
+Provide a selection of existing group names.
+
+The deletion flow must:
+	1.	Display the group name.
+	2.	Allow the administrator to select the correct group.
+	3.	Request confirmation.
+	4.	Delete only the selected group and its membership records.
+	5.	Preserve wallets that belong to other groups.
+	6.	Preserve unrelated data.
+	7.	Explain the consequences before confirmation.
+
+Handle duplicate group names safely by requiring a unique selection or disambiguating them.
+
+Group enablement
+
+Disabled groups must not contribute tracked wallets to qualifying activity counts.
+
+Disabling a group must not delete its wallets or history.
+
+Enabling or disabling a group must take effect without restarting the bot.
+
+Group lists must show each group’s status and wallet count.
+
+All group and wallet management operations must require appropriate administrative permissions.
+
+⸻
+
+9. DISCORD ALERT FORMATS
+
+Alerts must be concise, accurate, and readable.
+
+Do not include individual wallet addresses in mint or purchase alerts.
+
+Do not download or attach NFT images.
+
+Include the verified collection name, chain, distinct-wallet count, reliable NFT quantity where available, rolling window, threshold, group breakdown, verified OpenSea collection link, verified social links where available, and actual event timestamp.
+
+Mint alert
+
+🚨 NFT MINT SMART MONEY ALERT
+
+Collection: Verified Collection Name
+Network: Verified Chain Name
+Unique minters: 3
+NFTs minted: 7
+Window: 60 minutes
+Threshold: 3 wallets
+
+Groups:
+	•	Alpha — 1 wallet, 3 NFTs
+	•	Beta — 1 wallet, 2 NFTs
+	•	Gamma — 1 wallet, 2 NFTs
+
+OpenSea: Verified collection link
+Socials: Verified official links, if available
+Detected: Actual event timestamp
+
+Purchase alert
+
+🚨 NFT BUY SMART MONEY ALERT
+
+Collection: Verified Collection Name
+Network: Verified Chain Name
+Unique buyers: 3
+NFTs bought: 4
+Window: 60 minutes
+Threshold: 3 wallets
+
+Groups:
+	•	Alpha — 2 wallets, 3 NFTs
+	•	Beta — 1 wallet, 1 NFT
+
+OpenSea: Verified collection link
+Socials: Verified official links, if available
+Detected: Actual event timestamp
+
+These are templates only. Never generate fake production activity to fill them.
+
+Group breakdown
+
+Display one concise line per qualifying group.
+
+Group totals may overlap if the same wallet belongs to multiple groups.
+
+Global unique-wallet totals must deduplicate those wallets.
+
+Only include groups that contributed at least one qualifying tracked wallet.
+
+Do not expose individual wallet addresses.
+
+If there are too many groups for one Discord message, split the breakdown safely instead of silently truncating it.
+
+Collection links
+
+Use verified collection identifiers or URLs obtained through official OpenSea data.
+
+Never guess a collection URL from its name.
+
+Confirm that the link corresponds to the relevant collection and chain.
+
+If the link cannot be verified, use this exact fallback:
+
+OpenSea: Collection link unavailable — verification required
+
+Send the activity alert if otherwise valid, but do not fabricate a link.
+
+Social links
+
+Only include official social links available from verified OpenSea collection metadata.
+
+Omit missing or unverified links.
+
+Milestone alerts
+
+Clearly identify follow-up milestones.
+
+For example:
+
+Milestone: 6 distinct wallets
+
+Only report counts supported by qualifying activity.
+
+⸻
+
+10. COLLECTION IDENTITY AND VERIFICATION
+
+Collection identity must be accurate and chain-aware.
+
+Use official OpenSea metadata and documented collection identifiers.
+
+Do not identify collections by name alone.
+
+The same collection name may refer to unrelated collections on different chains.
+
+Do not combine events for collections that cannot be verified as the same collection on the same chain.
+
+Do not assume that every event includes a contract address, collection slug, or token ID.
+
+Implement safe fallback behavior for missing, delayed, inconsistent, or unavailable metadata.
+
+If a collection cannot be verified, do not silently merge it with another collection.
+
+⸻
+
+11. EVENT DEDUPLICATION AND RECOVERY
+
+Duplicate prevention must work across restarts and reconnections.
+
+Use stable OpenSea event identifiers where officially available.
+
+If an event identifier is unavailable, use a carefully designed deterministic deduplication strategy based on the verified fields available. Document remaining uncertainty.
+
+Persist event identifiers and processing state in SQLite.
+
+Event-processing flow
+
+Implement a reliable pipeline:
+	1.	Receive an OpenSea event.
+	2.	Validate the event.
+	3.	Confirm the activity type is supported.
+	4.	Normalize the event.
+	5.	Deduplicate it.
+	6.	Resolve chain and collection identity.
+	7.	Determine whether the wallet is eligible.
+	8.	Persist the event.
+	9.	Evaluate the relevant rolling window.
+	10.	Calculate distinct wallets and reliable NFT quantities.
+	11.	Evaluate the configured threshold and milestones.
+	12.	Record a pending alert when one is due.
+	13.	Send the Discord notification.
+	14.	Record successful delivery.
+
+Handle failures between database writes and Discord message delivery.
+
+Use a persistent notification queue or equivalent mechanism.
+
+A restart must not silently lose a pending qualifying alert.
+
+Use bounded delivery retries and duplicate protection.
+
+Reconnection
+
+Implement:
+	•	One coordinated connection or subscription strategy where supported.
+	•	Exponential backoff with jitter.
+	•	Resubscription after reconnecting.
+	•	Persistent checkpoints where supported.
+	•	Overlapping historical reconciliation windows where available.
+	•	Pagination and rate-limit handling.
+	•	Bounded queues.
+	•	Deduplication across real-time and historical events.
+
+Do not create one connection or polling loop per wallet.
+
+Do not start duplicate background tasks after reconnecting.
+
+Do not claim every missed event can be recovered if OpenSea does not provide the necessary historical data.
+
+If a monitoring gap cannot be recovered, report it.
+
+⸻
+
+12. SQLITE SCHEMA, MIGRATIONS, AND RETENTION
+
+Use SQLite for:
+	•	Groups.
+	•	Tracked wallets.
+	•	Group memberships.
+	•	Event history.
+	•	Deduplication identifiers.
+	•	Alert thresholds.
+	•	Milestones.
+	•	Rolling windows.
+	•	Alert enablement.
+	•	Pending notifications.
+	•	Delivery status.
+	•	Monitoring checkpoints.
+	•	Relevant configuration history.
+
+Add indexes for common lookups.
+
+Use prepared statements or parameterized queries.
+
+Use safe migrations and appropriate transaction boundaries.
+
+Avoid storing complete raw OpenSea responses when only a small subset of fields is needed.
+
+Never reset the production database during startup.
+
+Never delete user data to reduce memory or storage.
+
+Never automatically wipe groups or wallets after a deployment failure.
+
+Implement bounded retention for activity history, while preserving the active rolling window, required deduplication records, pending alerts, and milestone state.
+
+Perform cleanup in small batches.
+
+Do not run expensive full-database maintenance on every startup.
+
+Document retention behavior and storage requirements.
+
+⸻
+
+13. LOW-MEMORY AND LOW-STORAGE OPTIMIZATION
+
+The bot will run on a resource-constrained hosting plan.
+
+Verify the actual limits of the selected MonkeyBytes plan before choosing targets.
+
+Aim for a normal operating memory footprint below approximately 200 MB RSS if feasible, but treat this as a target rather than a guarantee.
+
+Measure and report actual memory usage where possible.
+
+Memory optimization
+	•	Keep dependencies minimal.
+	•	Avoid browser automation.
+	•	Avoid NFT image downloads.
+	•	Avoid local AI models.
+	•	Avoid heavyweight frameworks unless necessary.
+	•	Avoid unbounded caches.
+	•	Avoid unbounded event queues.
+	•	Avoid storing full API responses indefinitely.
+	•	Process events incrementally.
+	•	Bound concurrent API requests.
+	•	Reuse network connections where appropriate.
+	•	Use one coordinated monitoring service.
+	•	Avoid polling each wallet independently.
+	•	Prevent duplicate timers and listeners.
+	•	Release processed event references.
+	•	Use indexed database queries.
+	•	Avoid loading the entire event history into memory.
+	•	Keep logging concise.
+	•	Implement safe backpressure when event processing falls behind.
+
+Storage optimization
+	•	Do not include node_modules in deployment archives.
+	•	Keep production dependencies minimal.
+	•	Do not download NFT images.
+	•	Avoid storing large raw payloads.
+	•	Rotate or bound logs where supported.
+	•	Use bounded event retention.
+	•	Clean only disposable temporary files.
+	•	Monitor database growth.
+	•	Preserve lockfiles and required project configuration.
+	•	Never delete the production database to free space.
+
+Resource monitoring
+
+Provide /status or an equivalent command that reports, where practical:
+	•	Uptime.
+	•	Memory usage.
+	•	Database size.
+	•	Tracked wallet count.
+	•	Group count.
+	•	Enabled groups.
+	•	Supported chain monitoring status.
+	•	Recent API errors.
+	•	Last successful activity check.
+	•	Last received event.
+	•	Pending notification count.
+	•	Alert-delivery health.
+
+Do not expose credentials.
+
+Do not claim the bot is healthy when the OpenSea connection is broken.
+
+Distinguish unavailable measurements from successful health checks.
+
+⸻
+
+14. REQUIRED DISCORD COMMANDS
+
+Implement and register the full command set.
+
+Wallets
+	•	/wallet add
+	•	/wallet bulk_add
+	•	/wallet list
+	•	/wallet remove
+	•	/wallet search
+	•	/wallet status
+
+Groups
+	•	/group create
+	•	/group list
+	•	/group add_wallet
+	•	/group remove_wallet
+	•	/group enable
+	•	/group disable
+	•	/group delete
+
+Alerts
+	•	/alerts settings
+	•	/alerts set_threshold
+	•	/alerts set_window
+	•	/alerts add_milestone
+	•	/alerts remove_milestone
+	•	/alerts set_milestones
+	•	/alerts enable
+	•	/alerts disable
+	•	/alerts reset_defaults
+	•	/alerts test
+
+Status and statistics
+	•	/status
+	•	/stats
+	•	/chains
+
+Use valid Discord slash-command names and option definitions. If Discord imposes naming or schema restrictions, adapt the command structure without removing the functionality.
+
+Commands must provide clear success and failure responses.
+
+Handle missing parameters, invalid values, nonexistent groups, unsupported chains, insufficient permissions, database failures, and API outages.
+
+Use ephemeral responses for sensitive administrative operations where appropriate.
+
+⸻
+
+15. SECURITY
+	•	Keep credentials in environment variables.
+	•	Never hard-code API keys or bot tokens.
+	•	Validate all user-supplied input.
+	•	Use parameterized database queries.
+	•	Verify administrative permissions server-side.
+	•	Prevent unauthorized group and wallet changes.
+	•	Do not expose individual wallet addresses in activity alerts.
+	•	Never log authentication headers or secrets.
+	•	Do not accept arbitrary executable commands from Discord.
+	•	Do not expose raw internal errors to ordinary users.
+	•	Keep audit logs concise and free of secrets.
+
+Where useful, record administrative configuration changes with the setting, timestamp, and responsible administrator without storing unnecessary personal information.
+
+⸻
+
+16. ERROR HANDLING
+
+Handle failures gracefully without uncontrolled retries or unnecessary crashes.
+
+OpenSea errors
+
+Handle:
+	•	Invalid credentials.
+	•	HTTP 400, 401, 403, 429, and 5xx.
+	•	Timeouts.
+	•	Invalid JSON.
+	•	Missing response fields.
+	•	Unsupported chains.
+	•	Unsupported activity types.
+	•	Missing metadata.
+	•	WebSocket disconnections.
+	•	Subscription failures.
+	•	Pagination failures.
+	•	API schema changes.
+
+Discord errors
+
+Handle:
+	•	Invalid bot token.
+	•	Missing permissions.
+	•	Slash-command registration failures.
+	•	Rate limits.
+	•	Message delivery failures.
+	•	Oversized messages.
+	•	Deleted or inaccessible channels.
+
+Database and runtime errors
+
+Handle:
+	•	Database locked.
+	•	Disk full.
+	•	Missing data directory.
+	•	Migration failures.
+	•	Database corruption.
+	•	Failed writes.
+	•	Cleanup failures.
+	•	Memory pressure.
+	•	Unexpected exceptions.
+	•	Unhandled promise rejections.
+	•	Duplicate background tasks.
+	•	Shutdown and restart signals.
+
+Use bounded retries and sensible backoff.
+
+Do not continuously retry permanent errors.
+
+Never silently claim monitoring is healthy when it is not.
+
+⸻
+
+17. PROJECT FILES AND BUILD REQUIREMENTS
+
+Provide a complete, maintainable project containing:
+	•	package.json
+	•	package-lock.json
+	•	TypeScript source files.
+	•	Discord client initialization.
+	•	Slash-command registration.
+	•	Wallet management.
+	•	Group management.
+	•	OpenSea API client.
+	•	Real-time monitoring where supported.
+	•	Historical reconciliation where supported.
+	•	Multi-chain capability registry.
+	•	Event normalization.
+	•	Mint detection.
+	•	Purchase detection.
+	•	Rolling-window aggregation.
+	•	Adjustable threshold engine.
+	•	Milestone management.
+	•	Duplicate-event prevention.
+	•	Persistent alert-delivery queue.
+	•	SQLite database layer.
+	•	Database migrations.
+	•	Resource monitoring.
+	•	Error-handling utilities.
+	•	Automated tests.
+	•	.env.example
+	•	.gitignore
+	•	README.
+
+Do not leave critical functionality as TODO comments or empty placeholders.
+
+Do not replace unavailable functionality with fabricated results.
+
+Dependency requirements
+
+The project must install successfully using:
+
+npm ci
+
+Provide a synchronized package-lock.json.
+
+Use a Node.js version supported by MonkeyBytes.
+
+Document the correct production startup command.
+
+Do not rely on development-only dependencies at runtime unless explicitly required and justified.
+
+⸻
+
+18. AUTOMATED TESTING
+
+Use an isolated test database.
+
+Mocks must never write fabricated activity into the production database.
+
+Wallet and group tests
+
+Test:
+	•	Empty production initialization.
+	•	Manual creation of the first group.
+	•	Adding one or many wallets.
+	•	Invalid address rejection.
+	•	Duplicate prevention.
+	•	Wallets belonging to multiple groups.
+	•	Removing one group membership without deleting other memberships.
+	•	Enabling and disabling groups.
+	•	Safe group deletion.
+	•	Preserving wallets used by other groups.
+	•	Unauthorized command rejection.
+
+Activity detection tests
+
+Test:
+	•	Three distinct wallets minting from the same collection and chain within 60 minutes.
+	•	Three distinct wallets purchasing from the same collection and chain within 60 minutes.
+	•	Independent mint and purchase counts.
+	•	Duplicate-event prevention.
+	•	Repeated events from one wallet counting as one distinct wallet.
+	•	Rolling-window expiration.
+	•	Different chains remaining separate.
+	•	Different collections remaining separate.
+	•	Listings and transfers not being classified as purchases.
+	•	Invalid activity being excluded.
+	•	Reliable NFT quantity aggregation.
+	•	Missing quantities being reported honestly.
+
+Alert configuration tests
+
+Test:
+	•	Default mint threshold of 3.
+	•	Default purchase threshold of 3.
+	•	Default 60-minute windows.
+	•	Default milestones of 3, 6, 12, and 15.
+	•	Independent mint and purchase thresholds.
+	•	Independent rolling windows.
+	•	Adding and removing milestones.
+	•	Invalid milestone rejection.
+	•	Immediate setting persistence.
+	•	Applying settings without restarting.
+	•	Persistence across restart.
+	•	Reset confirmation.
+	•	Threshold re-evaluation against existing events.
+	•	Duplicate prevention after configuration changes.
+	•	Administrative permissions.
+
+Delivery and recovery tests
+
+Test:
+	•	Initial threshold alert.
+	•	Follow-up milestone alerts.
+	•	Duplicate-event suppression.
+	•	Recovery after Discord delivery failure.
+	•	Pending alert recovery after restart.
+	•	Correct collection-link verification.
+	•	Fallback message for unverifiable links.
+	•	Correct group breakdown.
+	•	No wallet addresses in activity alerts.
+	•	Test alerts not creating fake events.
+	•	OpenSea reconnection behavior.
+	•	Historical reconciliation deduplication.
+
+Multi-chain tests
+
+Check the chain registry against current official OpenSea documentation.
+
+Do not mark a chain or capability as supported without evidence.
+
+Resource and persistence tests
+
+Test:
+	•	Database initialization.
+	•	Migrations.
+	•	Restart persistence.
+	•	Deduplication persistence.
+	•	Pending alert persistence.
+	•	Event retention.
+	•	Safe cleanup.
+	•	Disk-full handling.
+	•	Bounded queues.
+	•	Resource use under representative workloads.
+
+Clearly distinguish mocked tests, automated tests, and live API integration tests.
+
+Do not claim that a live OpenSea test was performed if real credentials or network access were unavailable.
+
+⸻
+
+19. MONKEYBYTES DEPLOYMENT GUIDE
+
+The README must contain a dedicated section titled:
+
+Deploying on MonkeyBytes
+
+Use the official documentation:
+
+https://dash.monkey-network.xyz/docs
+
+Explain, based on verified platform capabilities:
+	1.	Which application type to select.
+	2.	Which supported Node.js version to choose.
+	3.	How to upload or connect the project.
+	4.	Which files must be included.
+	5.	How dependencies are installed.
+	6.	How to configure the three required environment variables.
+	7.	Which startup command to use.
+	8.	How the SQLite database is initialized.
+	9.	Where persistent database storage should be located.
+	10.	How to verify the Discord bot is online.
+	11.	How to verify slash commands are registered.
+	12.	How to create the first group manually.
+	13.	How to add tracked wallets.
+	14.	How to configure mint and purchase thresholds.
+	15.	How to inspect application logs.
+	16.	How to restart the bot safely.
+	17.	How to back up the database.
+	18.	How to update the application without losing data.
+	19.	How to diagnose OpenSea authentication errors.
+	20.	How to diagnose Discord authentication errors.
+	21.	How to diagnose storage, memory, and connection failures.
+
+Do not invent dashboard menu names, startup settings, or deployment steps.
+
+If a platform feature cannot be verified, clearly mark it as unverified and provide the next step needed to establish compatibility.
+
+Deployment safety
+
+Never tell me to delete the database to resolve a normal application error.
+
+Never wipe groups, wallets, alert settings, or history during deployment.
+
+Preserve the database across updates using the persistent storage mechanism supported by the platform.
+
+Do not claim database persistence until the storage behavior has been verified.
+
+⸻
+
+20. IMPLEMENTATION WORKFLOW
+
+Follow these phases in order.
+
+Phase 1: Verify documentation
+
+Inspect current official OpenSea and MonkeyBytes documentation.
+
+Establish:
+	•	Chain support.
+	•	Event support.
+	•	Real-time support.
+	•	Historical retrieval.
+	•	Authentication requirements.
+	•	Rate limits.
+	•	Runtime requirements.
+	•	Startup requirements.
+	•	Persistent-storage behavior.
+	•	Network connectivity.
+	•	Resource limits.
+
+Identify limitations before implementing the detection engine.
+
+Phase 2: Design
+
+Design:
+	•	Application architecture.
+	•	Database schema.
+	•	Safe migrations.
+	•	Chain-capabilities registry.
+	•	Normalized event format.
+	•	Event deduplication.
+	•	Rolling-window calculations.
+	•	Independent mint and purchase logic.
+	•	Configurable alert thresholds.
+	•	Milestone behavior.
+	•	Persistent notification delivery.
+	•	Resource management.
+	•	MonkeyBytes deployment configuration.
+
+Phase 3: Implement
+
+Build the complete application.
+
+Do not leave essential modules as placeholders.
+
+Do not remove features to simplify the implementation without first explaining why they cannot be supported.
+
+Phase 4: Test
+
+Install dependencies.
+
+Verify:
+
+npm ci
+
+Run the build and type checks.
+
+Run automated tests.
+
+Test database persistence, threshold changes, group management, duplicate prevention, recovery, and error handling.
+
+Test actual OpenSea integration where credentials and network access are available.
+
+Fix discovered failures.
+
+Phase 5: Package
+
+Provide the complete project.
+
+If file generation is available, create a ZIP archive containing the deployable source and configuration.
+
+Exclude:
+	•	Real credentials.
+	•	Secret .env files.
+	•	node_modules.
+	•	Production databases.
+	•	Unnecessary temporary files.
+	•	Test data that could be mistaken for production activity.
+
+Include package-lock.json, .env.example, tests, and deployment instructions.
+
+Phase 6: Report results
+
+Provide a clear report listing:
+	•	Implemented features.
+	•	Registered commands.
+	•	Verified supported chains.
+	•	Mint support by chain.
+	•	Purchase support by chain.
+	•	Real-time monitoring support.
+	•	Historical recovery support.
+	•	Automated test results.
+	•	Live API tests actually performed.
+	•	Actual memory measurements.
+	•	Storage requirements.
+	•	Verified MonkeyBytes compatibility.
+	•	Known limitations.
+	•	Remaining setup steps.
+
+Do not claim a feature is implemented or tested when it is not.
+
+⸻
+
+21. FINAL ACCEPTANCE CRITERIA
+
+The project is complete only when the following conditions are satisfied, to the extent permitted by documented OpenSea capabilities and the selected MonkeyBytes plan.
+	1.	The application starts successfully on the verified MonkeyBytes runtime.
+	2.	Dependencies install successfully using npm ci.
+	3.	The project includes a synchronized package-lock.json.
+	4.	The production database begins empty.
+	5.	No wallet groups are created automatically.
+	6.	I can manually create my first group.
+	7.	I can add, remove, search, and manage tracked wallets.
+	8.	I can create, enable, disable, and safely delete groups.
+	9.	The bot uses OpenSea as its only activity source.
+	10.	The bot supports all verified chains for which the required OpenSea activity capabilities exist.
+	11.	Minting and genuine purchases are detected separately.
+	12.	The initial threshold defaults to three distinct wallets for each activity type.
+	13.	Both rolling windows default to 60 minutes.
+	14.	Default milestones are 3, 6, 12, and 15.
+	15.	I can change thresholds through Discord without restarting.
+	16.	I can change rolling windows through Discord without restarting.
+	17.	I can add and remove milestones through Discord.
+	18.	Configuration survives restarts and redeployments.
+	19.	Duplicate events do not inflate counts or generate repeated alerts.
+	20.	Events from different chains and collections are not incorrectly combined.
+	21.	Alerts use verified collection identity and URLs where available.
+	22.	Activity alerts do not reveal individual wallet addresses.
+	23.	Global unique-wallet counts and overlapping group totals are clearly distinguished.
+	24.	Pending notifications and monitoring state recover safely where technically possible.
+	25.	The production database is not reset during ordinary startup, updates, or cleanup.
+	26.	Memory and storage usage are bounded and measured where possible.
+	27.	The selected MonkeyBytes plan supports the required continuous process and networking behavior.
+	28.	Database persistence is verified or a suitable persistent-storage solution is documented.
+	29.	Automated tests cover detection, configuration, permissions, persistence, and alert delivery.
+	30.	OpenSea and MonkeyBytes limitations are documented honestly.
+	31.	No fake activity, invented collection links, or unsupported capabilities are presented as real.
+	32.	The design does not require a paid API, paid hosting service, paid database, or paid monitoring service.
+	33.	The complete source, lockfile, environment example, tests, and deployment instructions are delivered.
+
+⸻
+
+FINAL INSTRUCTION
+
+Build the complete Discord NFT Smart Money Bot while preserving every requirement in this prompt.
+
+Do not sacrifice multi-chain coverage, OpenSea-only monitoring, accurate mint and purchase detection, adjustable Discord alert thresholds, manually managed wallet groups, persistent SQLite data, duplicate prevention, or reliable alerts merely to reduce memory usage.
+
+Optimize dependencies, concurrency, caching, database queries, event processing, and logging first.
+
+Verify MonkeyBytes compatibility rather than assuming it.
+
+Verify OpenSea capabilities rather than inventing them.
+
+If a feature cannot be delivered because of a documented limitation, explain the precise reason and implement the safest supported alternative.
+
+Start by examining the official documentation, then design, implement, test, package, and report the actual results.
+:::
+
+Before you use this prompt
+
+Three important things to keep in mind:
+	•	MonkeyBytes compatibility: The coding AI must verify the selected plan supports a continuously running Node.js process, outbound Discord/OpenSea connections, and the required storage persistence.
+	•	OpenSea coverage: The bot should support every verified chain for which OpenSea exposes the required events; it must not claim every chain supports real-time mint and purchase monitoring unless that is confirmed.
+	•	Protect your data: Keep your production database on verified persistent storage and back it up before deploying updates.
+
+This is the consolidated prompt, so you do not need to append the earlier threshold or MonkeyBytes sections separately.
